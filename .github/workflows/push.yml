@@ -7,8 +7,7 @@ on:
     push:
         branches:
             - main
-        tags:
-            - 'v*'  # Trigger on version tags like v1.0.0
+
 jobs:
     build-and-test:
         # The workflow will run on the latest Ubuntu virtual machine
@@ -30,7 +29,7 @@ jobs:
             -   name: Install dependencies
                 run: |
                     python -m pip install --upgrade pip
-                    pip install -r requirements.txt # <-- UPDATED: Now reads from requirements.txt
+                    pip install -r requirements.txt
 
             # 4. Runs the tests
             # This command will automatically find and run the 'test_main.py' file
@@ -54,16 +53,6 @@ jobs:
                 with:
                     username: ${{secrets.DOCKER_HUB_USERNAME}}
                     password: ${{secrets.DOCKER_HUB_TOKEN}}
-
-            -   name: Extract version from tag or use commit hash
-                id: version
-                run: |
-                    if [[ "${{ github.ref }}" == refs/tags/* ]]; then
-                        VERSION=${GITHUB_REF#refs/tags/}
-                    else
-                        VERSION=latest
-                    fi
-                    echo "version=${VERSION}" >> $GITHUB_OUTPUT
 
             -   name: Build and Push with version tag
                 uses: docker/build-push-action@v4
